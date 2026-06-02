@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum Severity {
+  low
+  medium
+  high
+}
+
+enum ClauseType {
+  personal_data
+  third_party
+  abusive
+  retention
+  recourse
+}
+
+enum Rating {
+  green
+  orange
+  red
+}
+
+// ─── User ───────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tags      Tag[]
+
+  @@map("users")
+}
+
+// ─── Site ───────────────────────────────────────────────
+
+model Site {
+  id                  String   @id @default(cuid())
+  domain              String   @unique
+  name                String?
+  currentGlobalScore  Int?     @map("current_global_score")
+  currentRating       Rating?  @map("current_rating")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  cgvVersions         CgvVersion[]
+  tags                SiteTag[]
+
+  @@map("sites")
+}
+
+// ─── CgvVersion ─────────────────────────────────────────
+
+model CgvVersion {
+  id          String   @id @default(cuid())
+  siteId      String   @map("site_id")
+  contentHash String   @map("content_hash")
+  rawText     String?  @map("raw_text")
+  sourceUrl   String?  @map("source_url")
+  extractedAt DateTime @default(now()) @map("extracted_at")
+
+  site        Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  analysis    Analysis?
+
+  @@unique([siteId, contentHash])
+  @@index([siteId])
+  @@map("cgv_versions")
+}
+
+// ─── Analysis ───────────────────────────────────────────
+
+model Analysis {
+  id           String   @id @default(cuid())
+  cgvVersionId String   @unique @map("cgv_version_id")
+  globalScore  Int      @map("global_score") // 0–100
+  rating       Rating
+  analyzedAt   DateTime @default(now()) @map("analyzed_at")
+
+  cgvVersion   CgvVersion @relation(fields: [cgvVersionId], references: [id], onDelete: Cascade)
+  clauses      Clause[]
+
+  @@map("analyses")
+}
+
+// ─── Clause ─────────────────────────────────────────────
+
+model Clause {
+  id          String     @id @default(cuid())
+  analysisId  String     @map("analysis_id")
+  clauseType  ClauseType @map("clause_type")
+  content     String
+  severity    Severity
+  scoreImpact Int        @map("score_impact") // negative, e.g. -15
+  
+  analysis    Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId])
+  @@map("clauses")
+}
+
+// ─── Tag ────────────────────────────────────────────────
+
+model Tag {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  name      String
+  color     String   @default("#6366f1")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sites     SiteTag[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("tags")
+}
+
+// ─── SiteTag (junction) ─────────────────────────────────
+
+model SiteTag {
+  siteId    String   @map("site_id")
+  tagId     String   @map("tag_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  site      Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  tag       Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([siteId, tagId])
+  @@index([tagId])
+  @@map("site_tags")
+}
