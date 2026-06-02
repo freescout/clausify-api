@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: clausify-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: clausify
+      POSTGRES_PASSWORD: clausify_dev
+      POSTGRES_DB: clausify_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - clausify_pgdata:/var/lib/postgresql/data
+
+volumes:
+  clausify_pgdata:
