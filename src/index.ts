@@ -44,7 +44,7 @@ async function buildApp() {
   }));
 
   // Route registration will go here as we build them:
-  await app.register(authRoutes, { prefix: "/auth" });
+  await app.register(authRoutes, { prefix: "/api/auth" });
   // await app.register(analysisRoutes, { prefix: "/api" });
   // await app.register(tagRoutes, { prefix: "/api/tags" });
 

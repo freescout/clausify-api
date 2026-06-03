@@ -141,7 +141,7 @@ Plus, for the tagging feature:
 - [x] Database schema (Prisma) + initial migration
 - [x] Prisma client (v7 pg adapter)
 - [x] Fastify server entry + core plugins + health check
-- [ ] Auth (register / login / JWT middleware)
+- [x] Auth (register / login / JWT middleware)
 - [ ] Analysis service (Claude integration)
 - [ ] Analysis endpoints (analyze / sites / history)
 - [ ] Tags endpoints (CRUD + assign to sites)

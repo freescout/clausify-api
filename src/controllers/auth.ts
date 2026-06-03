@@ -6,10 +6,10 @@ export async function registerHandler(
   request: FastifyRequest<{ Body: RegisterBody }>,
   reply: FastifyReply,
 ) {
-  const { email, password } = request.body;
+  const { email, password, name } = request.body;
 
   try {
-    const user = await registerUser(email, password);
+    const user = await registerUser(email, password, name);
 
     // Sign a JWT for the new user (jwtSign comes from @fastify/jwt)
     const token = await reply.jwtSign({ userId: user.id, email: user.email });

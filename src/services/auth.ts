@@ -11,6 +11,7 @@ const SALT_ROUNDS = 10;
 export async function registerUser(
   email: string,
   password: string,
+  name: string,
 ): Promise<PublicUser> {
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -20,12 +21,13 @@ export async function registerUser(
   const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 
   const user = await prisma.user.create({
-    data: { email, password: hashed },
+    data: { email, password: hashed, name },
   });
 
   return {
     id: user.id,
     email: user.email,
+    name: user.name,
     created_at: user.createdAt.toISOString(),
   };
 }
@@ -46,6 +48,7 @@ export async function verifyCredentials(
   return {
     id: user.id,
     email: user.email,
+    name: user.name,
     created_at: user.createdAt.toISOString(),
   };
 }
