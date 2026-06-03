@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import jwt from "@fastify/jwt";
+import { authRoutes } from "./routes/auth";
 
 const PORT = Number(process.env.PORT ?? 3000);
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -43,7 +44,7 @@ async function buildApp() {
   }));
 
   // Route registration will go here as we build them:
-  // await app.register(authRoutes, { prefix: "/auth" });
+  await app.register(authRoutes, { prefix: "/auth" });
   // await app.register(analysisRoutes, { prefix: "/api" });
   // await app.register(tagRoutes, { prefix: "/api/tags" });
 
