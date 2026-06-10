@@ -5,6 +5,7 @@ import helmet from "@fastify/helmet";
 import jwt from "@fastify/jwt";
 import { authRoutes } from "./routes/auth";
 import { analysisRoutes } from "./routes/analysis";
+import { sitesRoutes } from "./routes/sites";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "change-me-in-production";
 const CORS_ORIGINS = (process.env.CORS_ORIGINS ?? "http://localhost:5173")
@@ -43,6 +44,7 @@ export async function buildApp() {
 
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(analysisRoutes, { prefix: "/api" });
+  await app.register(sitesRoutes, { prefix: "/api/sites" });
 
   return app;
 }
