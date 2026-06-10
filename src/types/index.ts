@@ -36,3 +36,29 @@ export interface PublicUser {
   name: string;
   created_at: string;
 }
+
+// ─── Analysis ────────────────────────────────────────────────────────────
+
+export interface AnalysisClause {
+  type: ClauseType;
+  content: string;
+  severity: Severity;
+  score_impact: number;
+}
+
+export interface AnalysisResult {
+  domain: string;
+  global_score: number;
+  rating: Rating;
+  analyzed_at: string;
+  clauses: AnalysisClause[];
+}
+
+// ─── Analysis request body ───────────────────────────────────────────────
+
+export interface AnalyzeBody {
+  text: string;
+  domain: string;
+  sourceUrl: string;
+  language?: "en" | "fr";
+}
