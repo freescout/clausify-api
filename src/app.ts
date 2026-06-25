@@ -36,6 +36,23 @@ export async function buildApp() {
 
   await app.register(jwt, { secret: JWT_SECRET });
 
+  // ─── Body parser ──────────────────────────────────────
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (req, body, done) => {
+      if (!body || (body as string).trim() === "") {
+        done(null, {});
+      } else {
+        try {
+          done(null, JSON.parse(body as string));
+        } catch (err) {
+          done(err as Error, undefined);
+        }
+      }
+    },
+  );
+
   // ─── Routes ───────────────────────────────────────────
 
   app.get("/health", async () => ({
