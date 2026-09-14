@@ -36,13 +36,26 @@ This is the backend that powers the Clausify Chrome extension and web platform.
 
 ## Local Setup
 
-### 1. Install dependencies
+There are two ways to run this locally: the whole stack via Docker Compose, or the API on the host with just Postgres in Docker (better for hot reload).
+
+### Option A — Full stack via Docker Compose
+
+```bash
+cp .env.example .env   # fill in ANTHROPIC_API_KEY at least
+docker compose up --build
+```
+
+This builds the API image, starts Postgres, waits for it to be healthy, and runs `prisma migrate deploy` before starting the server. The API runs at **http://localhost:3000**.
+
+### Option B — API on host, Postgres in Docker
+
+#### 1. Install dependencies
 
 ```bash
 yarn install
 ```
 
-### 2. Configure environment
+#### 2. Configure environment
 
 ```bash
 cp .env.example .env
@@ -50,20 +63,20 @@ cp .env.example .env
 
 Edit `.env` and fill in your values (see [Environment variables](#environment-variables)).
 
-### 3. Start PostgreSQL
+#### 3. Start PostgreSQL
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
-### 4. Generate the Prisma client & run migrations
+#### 4. Generate the Prisma client & run migrations
 
 ```bash
 yarn db:generate
 yarn db:migrate
 ```
 
-### 5. Start the dev server
+#### 5. Start the dev server
 
 ```bash
 yarn dev
@@ -145,7 +158,7 @@ POST /api/auth/login        — { email, password } → { token, user }
 ### Analysis
 
 ```
-POST /api/analyze           🔒 — { text, domain, sourceUrl, language? } → AnalysisResult
+POST /api/analyze            — { text, domain, sourceUrl, language? } → AnalysisResult
 ```
 
 Called by the Chrome extension after extracting T&C text from a page. Returns a cached result (200) if the same text hash has been analyzed before, or a fresh Claude analysis (201) otherwise.
@@ -250,5 +263,5 @@ src/
 - [x] Tags endpoints (CRUD + assign to sites)
 - [x] End-to-end verified through real frontend UI
 - [ ] Tests
-- [ ] Docker setup for the API itself
-- [ ] `.env.example`
+- [x] Docker setup for the API itself
+- [x] `.env.example`
