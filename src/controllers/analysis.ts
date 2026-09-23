@@ -53,8 +53,14 @@ export async function analyzeHandler(
       create: { siteId: site.id, contentHash, sourceUrl, rawText: text },
     });
 
-    const analysis = await tx.analysis.create({
-      data: {
+    const analysis = await tx.analysis.upsert({
+      where: { cgvVersionId: version.id },
+      update: {
+        globalScore: result.global_score,
+        rating: result.rating,
+        analyzedAt: new Date(result.analyzed_at),
+      },
+      create: {
         cgvVersionId: version.id,
         globalScore: result.global_score,
         rating: result.rating,
