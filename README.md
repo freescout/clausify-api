@@ -112,6 +112,7 @@ Health check: **http://localhost:3000/health**
 | `yarn db:migrate`  | Create & apply a migration                          |
 | `yarn db:push`     | Push schema to DB without a migration (prototyping) |
 | `yarn db:studio`   | Open Prisma Studio (database GUI)                   |
+| `yarn test`        | Run the test suite (Vitest)                         |
 
 ---
 
@@ -262,6 +263,6 @@ src/
 - [x] `GET /api/sites` + history endpoints
 - [x] Tags endpoints (CRUD + assign to sites)
 - [x] End-to-end verified through real frontend UI
-- [ ] Tests
 - [x] Docker setup for the API itself
 - [x] `.env.example`
+- [x] Tests (auth/analysis services, auth/analyze routes)
